@@ -1242,19 +1242,8 @@ body:has([data-slot='select-content']) .instrument {
   gap: 20px;
   margin-bottom: 14px;
 }
-.step-picker-heading > span {
-  color: var(--channel);
-  font-size: 14px;
-}
 .step-picker-heading .loop-control {
   margin: 0 0 0 auto;
-  font-size: 14px;
-}
-.follow-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #bcc2b3;
   font-size: 14px;
 }
 .step-strip.editor-step-strip {
@@ -1428,9 +1417,6 @@ body:has([data-slot='select-content']) .instrument {
   }
   .step-picker-heading .loop-control .choice {
     min-width: 48px;
-  }
-  .follow-control {
-    margin-left: auto;
   }
   .editor-samples .lane-tag {
     font-size: 12px;
