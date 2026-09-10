@@ -129,7 +129,6 @@ export default function App() {
     [playing, setPlaying] = useState(false),
     [bpm, setBpm] = useState(120),
     [frame, setFrame] = useState<Frame>(EMPTY),
-    [follow, setFollow] = useState(true),
     [all, setAll] = useState(false),
     [message, setMessage] = useState(''),
     [rollSteps, setRollSteps] = useState([0, 0, 0, 0]),
@@ -140,8 +139,6 @@ export default function App() {
     [ports, setPorts] = useState<MidiPort[]>([]),
     [midiId, setMidiId] = useState('off'),
     [midiBusy, setMidiBusy] = useState(false);
-  const followRef = useRef(follow);
-  followRef.current = follow;
   const channelsRef = useRef(channels);
   channelsRef.current = channels;
   const engine = useRef<AudioEngine | null>(null);
@@ -162,10 +159,6 @@ export default function App() {
       setRollSteps((prev) =>
         prev.map((s, c) => stoppedFrame.blocks[c]?.step ?? s),
       );
-      if (followRef.current)
-        setEditSteps((prev) =>
-          prev.map((s, c) => stoppedFrame.blocks[c]?.step ?? s),
-        );
     }
     engine.current?.stop();
     setPlaying(false);
@@ -227,10 +220,7 @@ export default function App() {
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   }, [toggle]);
-  const activeStep =
-    follow && playing && frame.blocks[selected]
-      ? frame.blocks[selected]!.step
-      : editSteps[selected];
+  const activeStep = editSteps[selected];
   const ch = channels[selected],
     step = ch.steps[activeStep];
   const edit = (patch: Partial<Step>) =>
@@ -253,7 +243,6 @@ export default function App() {
   const chooseStep = (c: number, s: number) => {
     setSelected(c);
     setEditSteps((prev) => prev.map((v, i) => (i === c ? s : v)));
-    setFollow(false);
   };
   async function loadSample(file?: File) {
     if (!file) return;
@@ -517,9 +506,9 @@ export default function App() {
           <p>
             Each channel loops independently through up to 16 steps. Select a
             numbered step to edit it. Density places hits inside its length;
-            curve value bends their timing. Follow keeps the editor on the
-            playing step. All steps applies edits to all 16 steps of the
-            selected channel.
+            curve value bends their timing. The editor stays on the step you
+            selected; playback lights its own position separately. All steps
+            applies edits to all 16 steps of the selected channel.
           </p>
           <p>
             Three sample players per channel follow Main, Aux 1, and Aux 2.
@@ -737,7 +726,6 @@ export default function App() {
         </RadioGroup>
         <div className="step-picker">
           <div className="step-picker-heading">
-            <span>Step</span>
             <div className="loop-control">
               <span>Loop</span>
               <Choice
@@ -763,22 +751,6 @@ export default function App() {
                 }
               />
             </div>
-            <label className="follow-control">
-              Follow{' '}
-              <Switch
-                aria-label="Follow playback"
-                checked={follow}
-                onCheckedChange={(value) => {
-                  if (!value && frame.blocks[selected])
-                    setEditSteps((prev) =>
-                      prev.map((s, c) =>
-                        c === selected ? frame.blocks[selected]!.step : s,
-                      ),
-                    );
-                  setFollow(value);
-                }}
-              />
-            </label>
           </div>
           <div
             className="step-strip editor-step-strip"
