@@ -1,4 +1,3 @@
-'use client';
 import { useState, useRef, useEffect, useCallback, CSSProperties } from 'react';
 import {
   initialChannels,
@@ -123,7 +122,7 @@ function Range({
     </div>
   );
 }
-export default function Home() {
+export default function App() {
   const [channels, setChannels] = useState(initialChannels),
     [selected, setSelected] = useState(0),
     [editSteps, setEditSteps] = useState([0, 0, 0, 0]),
